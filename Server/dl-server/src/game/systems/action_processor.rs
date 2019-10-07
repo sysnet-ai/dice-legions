@@ -1,6 +1,6 @@
-use crate::ecs_lite::components::*;
-use crate::ecs_lite::resources::*;
-use crate::ecs_lite::systems::GameState;
+use crate::game::components::*;
+use crate::game::resources::*;
+use crate::game::systems::GameState;
 
 pub struct ActionProcessor;
 impl ActionProcessor
@@ -18,7 +18,7 @@ impl ActionProcessor
                 },
                 &GameAction::AttackOn { id, target, orig, dst } =>
                 {
-                    let mut evts = vec![GameEvent::Move { id, orig, dst }];
+                    let evts = vec![GameEvent::Move { id, orig, dst }];
                     let obj_attacker = game_state.objects.get(&id).unwrap();
                     let obj_target = game_state.objects.get(&target).unwrap();
 

@@ -1,12 +1,28 @@
-use crate::ecs_lite::components::*;
-use crate::ecs_lite::resources::*;
-use crate::ecs_lite::systems::GameState;
+use crate::game::components::*;
+use crate::game::resources::*;
+use crate::game::systems::GameState;
 
 pub struct EventProcessor;
 impl EventProcessor
 {
     pub fn apply_events(game_state: &mut GameState, events: &Vec<GameEvent>) // -> Result?
     {
+        events.iter()
+              .for_each(|ev|
+                  match ev
+                  {
+                      GameEvent::Move { id, orig, dst } =>
+                      {
+                          let obj = game_state.objects.get_mut(&id).unwrap();
+                          if let Some(Component::Movable { pos, max_speed: _ }) = obj.components.get_mut(&ComponentID::MovableID)
+                          {
+                              assert!(*pos == *orig, "Mismatch on Movable.pos and Move.orig for object {:?}", id);
+                              *pos = *dst;
+                          }
+                          game_state.map.move_obj(orig, dst);
+                      },
+                      _ => {}
+                  });
     }
 }
 
@@ -23,10 +39,10 @@ mod test
     fn apply_move()
     {
         let mut map = Map::<ID>::new_with_dimensions((10, 10));
-        let mut objs = HashMap::<ID, Object>::new(); 
+        let mut objs = HashMap::<ID, Object>::new();
+
         let components = vec![ Component::Movable { pos: (0, 0), max_speed: 1 } ];
         let obj = Object::new_with_components(ID::new_with_value(1), Owner::Player1, components);
-
         objs.insert(obj.id, obj);
 
         let mut game_state = GameState { map: &mut map, objects: &mut objs };

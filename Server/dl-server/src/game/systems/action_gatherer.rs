@@ -1,9 +1,9 @@
 use std::collections::{HashMap, HashSet};
 use std::convert::TryInto;
 
-use crate::ecs_lite::components::*;
-use crate::ecs_lite::resources::*;
-use crate::ecs_lite::systems::GameState;
+use crate::game::components::*;
+use crate::game::resources::*;
+use crate::game::systems::GameState;
 
 pub struct ActionGatherer;
 impl ActionGatherer

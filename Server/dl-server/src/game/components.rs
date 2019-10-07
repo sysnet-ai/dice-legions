@@ -29,20 +29,6 @@ pub enum Component
 
 impl Component
 {
-    /*
-    fn apply(&mut self, ev: &GameEvent)
-    {
-        match (self, ev)
-        {
-            (Component::Movable { pos, max_speed: _ }, GameEvent::Move { id, orig, dst }) =>
-            {
-                assert!(*pos == *orig, "Mismatch on Movable.pos and Move.orig for object {:?}", id);
-                *pos = *dst;
-            },
-            _ => {}
-        }
-    } */
-
     pub fn get_component_id(&self) -> ComponentID
     {
         match self 
@@ -73,6 +59,8 @@ pub enum StatID
     Speed,
 }
 
+
+//TODO: Move these out
 #[allow(dead_code)]
 pub enum GameEvent
 {
@@ -89,31 +77,4 @@ pub enum GameAction
 {
     MoveTo   { id: ID, orig: GridPosition, dst: GridPosition },
     AttackOn { id: ID, target: ID, orig: GridPosition, dst: GridPosition },
-}
-
-impl GameAction
-{
-    pub fn process(&self) -> Vec<GameEvent>
-    {
-        /*
-        match self
-        {
-            &GameAction::MoveTo { id, orig, dst } =>
-            {
-                vec![GameEvent::Move { id, orig, dst }]
-            },
-            &GameAction::AttackOn { id, target, orig, dst } =>
-            {
-                let mut evts = vec![GameEvent::Move { id, orig, dst }];
-                let obj_attacker = world.objects.get(&id).unwrap();
-                let obj_target = world.objects.get(&target).unwrap();
-
-                evts.append(&mut world.combat.handle_combat(&obj_attacker, &obj_target, world));
-                
-                evts
-            }
-        }
-        */
-        vec![]
-    }
 }

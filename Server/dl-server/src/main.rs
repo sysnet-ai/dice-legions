@@ -1,30 +1,10 @@
 use std::collections::{HashMap};
 
-mod ecs_lite;
+mod game;
 
-use ecs_lite::components::*;
-use ecs_lite::resources::*;
-use ecs_lite::systems::*;
-
-struct CombatHandler;
-impl CombatHandler
-{
-    fn handle_combat(&self, attacker: &Object, target: &Object, world: &GameController) -> Vec<GameEvent>
-    {
-        /*
-        if let Component::Attackable { max_health } = attacker.components.get(&ComponentID::AttackableID).unwrap() // Let it panic
-        {
-            if let Component::Attackable { max_health } = target.components.get(&ComponentID::AttackableID).unwrap()
-            {
-                //
-                 
-            }
-        }
-        */
-
-        vec![]
-    }
-}
+use game::components::*;
+use game::resources::*;
+use game::systems::*;
 
 struct GameController
 {
@@ -36,13 +16,11 @@ impl GameController
 {
     pub fn new(map: Map<ID>, objs: HashMap<ID, Object>) -> GameController
     {
-        let mut gc = GameController
+        GameController
         {
             map: map,
             objects: objs,
-        };
-
-        gc
+        }
     }
 
     pub fn start(&mut self /*, ..*/)
@@ -71,13 +49,4 @@ impl GameController
 #[allow(dead_code)]
 fn main() 
 {
-}
-
-#[cfg(test_obs)]
-mod test
-{
-    use super::*;
-    use std::collections::{HashSet};
- 
-    
 }
