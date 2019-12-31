@@ -1,3 +1,6 @@
+#[path = "../utils/conf_random.rs"]
+pub mod conf_random;
+
 #[path = "components.rs"]
 pub mod components;
 

@@ -5,7 +5,8 @@ use crate::game::systems::GameState;
 pub struct ActionValidator;
 impl ActionValidator
 {
-    pub fn validate_actions(game_state: &GameState, actions:&Vec<GameAction>) // -> ????
+    pub fn validate_action(game_state: &GameState, action:&GameAction) -> bool
     {
+        true 
     }
 }

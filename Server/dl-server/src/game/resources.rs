@@ -1,9 +1,11 @@
-use std::convert::TryInto;
-use std::collections::{HashMap, HashSet};
-
 use super::components::*;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+use std::convert::TryInto;
+use std::collections::HashMap;
+
+use serde::{Serialize, Deserialize};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 #[allow(dead_code)]
 pub enum Owner
 {
@@ -25,6 +27,7 @@ impl Owner
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Object 
 {
     pub id: ID,
@@ -64,15 +67,16 @@ impl Object
         self.components.contains_key(comp_id)
     }
 
-    pub fn get_stat_value(&self, id: StatID) -> usize
+    pub fn get_stat_value(&self, id: &StatID) -> i32 
     {
-        // v = stats.get(id);
-        // return effects.get(id).modify(v);
-        0
+        let v = self.stats.get(id).unwrap();
+        // v = effects.get(id).modify(v);
+        *v 
     }
 }
 
 
+#[derive(Serialize, Deserialize)]
 pub struct Map<T>
 {
     grid: Vec<Vec<T>>,

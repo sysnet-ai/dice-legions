@@ -43,22 +43,46 @@ public class BoardController : MonoBehaviour
     private List<MoveToMarker> InstantiatedMarkers = new List<MoveToMarker>();
     private Piece ClickedPiece = null;
 
-    // Some connection manager of sorts
 
 #region MonoBehaviour
+    void Awake()
+    {
+        Debug.Log("Awoken!");
+    }
+
     void Start()
     {
-        // Get some sort of model from the connection?
+        Debug.Log("Started!");
+
+        EventManager em = EventManager.Instance;
+        em.SubscribeTo<NewGameCreated>(NewGameCreated, this.gameObject);
+
+        Connection WSConnection = Connection.Instance;
+
+        // TODO: Not sure this goes here, change to object from string
+        WSConnection.Send("{ \"ActionType\": \"NewGame\" }" );
+        
         Model = new BoardModel();
+    }
+#endregion
+
+#region Handlers
+    public bool NewGameCreated(Event ev)
+    {
+        NewGameCreated ngc = ev as NewGameCreated;
+        System.Diagnostics.Debug.Assert(ngc != null, "Passed wrong event type");
+
+        Model.FromNewGame(ngc);
+
         foreach(PieceModel pm in Model.Pieces)
         {
             Piece p = Instantiate(PiecePrototype);
             p.Initialize(pm, this);
         }
+        return true;
     }
-#endregion
 
-#region Handlers
+
     public void OnPieceClicked(Piece piece)
     {
         ConfigurableLogger.Debug(piece.Model.Position.GridPosition);

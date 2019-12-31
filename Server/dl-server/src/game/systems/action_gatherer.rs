@@ -77,7 +77,7 @@ impl ActionGatherer
 
                                 actions
                             },
-                            Component::Attackable { max_health: _ } =>
+                            Component::Attackable { max_health: _, attacker_dice: _, defender_dice: _ } =>
                             {
                                 Vec::<GameAction>::new()
                             }
@@ -94,7 +94,7 @@ impl ActionGatherer
         game_state
                     .objects
                     .iter()
-                    .filter(  |(_, obj)| obj.owner != *to_player)
+                    .filter(  |(_, obj)| obj.owner == to_player.other())
                     .for_each(|(_, obj)|
                         if obj.has_component(&ComponentID::AttackableID)
                         {
@@ -127,12 +127,13 @@ impl ActionGatherer
 mod test
 {
     use super::*;
-    use super::super::ObjectInitializer;
+    use crate::game::conf_random::*;
+    use crate::game::systems::ObjectInitializer;
 
     #[test]
     fn generate_moves()
     {
-        let mut map = Map::<ID>::new_with_dimensions((10, 10));
+        let map  = Map::<ID>::new_with_dimensions((10, 10));
         let mut objs = HashMap::<ID, Object>::new(); 
 
         let components = vec![ Component::Movable { pos: (0, 0), max_speed: 3 } ];
@@ -143,7 +144,8 @@ mod test
         let obj_2 = Object::new_with_components(ID::new_with_value(2), Owner::Player2, components_2);
         objs.insert(obj_2.id, obj_2);
 
-        let mut game_state = GameState { map: &mut map, objects: &mut objs };
+
+        let mut game_state = GameState::new(map, objs);
 
         ObjectInitializer::initialize(&mut game_state);
 
@@ -176,25 +178,25 @@ mod test
     #[test]
     fn generate_moves_and_attacks()
     {
-        let mut map = Map::<ID>::new_with_dimensions((10, 10));
+        let map = Map::<ID>::new_with_dimensions((10, 10));
         let mut objs = HashMap::<ID, Object>::new(); 
 
         let components = vec![ Component::Movable { pos: (0, 0), max_speed: 3 },
-                               Component::Attackable { max_health: 1 } ];
+                               Component::Attackable { max_health: 1, attacker_dice: vec![], defender_dice: vec![] } ];
         let obj = Object::new_with_components(ID::new_with_value(1), Owner::Player1, components);
         objs.insert(obj.id, obj);
 
         let components_2 = vec![ Component::Movable { pos: (1, 2), max_speed: 3 },
-                                 Component::Attackable { max_health: 1 } ];
+                                 Component::Attackable { max_health: 1, attacker_dice: vec![], defender_dice: vec![] } ];
         let obj_2 = Object::new_with_components(ID::new_with_value(2), Owner::Player2, components_2);
         objs.insert(obj_2.id, obj_2);
 
         let components_3 = vec![ Component::Movable { pos: (0, 3), max_speed: 3 },
-                                 Component::Attackable { max_health: 1 } ];
+                                 Component::Attackable { max_health: 1, attacker_dice: vec![], defender_dice: vec![] } ];
         let obj_3 = Object::new_with_components(ID::new_with_value(3), Owner::Player2, components_3);
         objs.insert(obj_3.id, obj_3);
 
-        let mut game_state = GameState { map: &mut map, objects: &mut objs };
+        let mut game_state = GameState::new(map, objs);
 
         ObjectInitializer::initialize(&mut game_state);
         let acts = ActionGatherer::available_actions(&game_state, &Owner::Player1);

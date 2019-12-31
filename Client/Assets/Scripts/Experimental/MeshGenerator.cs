@@ -71,13 +71,9 @@ public class MeshGenerator : MonoBehaviour
                 next = poss[pi+1];
             }
             bool goesUp    = next.WorldZ > pos.WorldZ;
-            bool goesDown  = next.WorldZ < pos.WorldZ;
+            bool goesDown  = !goesUp;
             bool goesLeft  = next.WorldX < pos.WorldX;
-            bool goesRight = next.WorldX > pos.WorldX;
-
-            ConfigurableLogger.MaxLevel = ConfigurableLogger.LogLevel.Debug;
-            ConfigurableLogger.Debug($"Up {goesUp} Down {goesDown} Left {goesLeft} Right {goesRight}");
-            ConfigurableLogger.MaxLevel = ConfigurableLogger.LogLevel.Info;
+            bool goesRight = !goesLeft; 
 
             //TODO... Where does these come from?
             float offset_x = 1.0f;

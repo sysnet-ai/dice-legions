@@ -1,33 +1,36 @@
 use crate::game::components::*;
 use crate::game::resources::*;
 use crate::game::systems::GameState;
+use crate::game::systems::CombatProcessor;
 
 pub struct ActionProcessor;
 impl ActionProcessor
 {
-    pub fn process_actions(game_state: &GameState, actions:&Vec<GameAction>) -> Vec<GameEvent>
+    pub fn process_actions(game_state: &mut GameState, actions:&Vec<GameAction>) -> Vec<GameEvent>
     {
         actions
         .iter()
-        .map(|act|
-            match act
-            {
-                &GameAction::MoveTo { id, orig, dst } =>
-                {
-                    vec![GameEvent::Move { id, orig, dst }]
-                },
-                &GameAction::AttackOn { id, target, orig, dst } =>
-                {
-                    let evts = vec![GameEvent::Move { id, orig, dst }];
-                    let obj_attacker = game_state.objects.get(&id).unwrap();
-                    let obj_target = game_state.objects.get(&target).unwrap();
-
-                    //evts.append(&mut game_state.combat.handle_combat(&obj_attacker, &obj_target, game_state));
-                    
-                    evts
-                }
-            })
+        .map(|act| Self::process_action(game_state, act))
         .flatten()
         .collect()
+    }
+
+    pub fn process_action(game_state: &mut GameState, action:&GameAction) -> Vec<GameEvent>
+    {
+        match action
+        {
+            &GameAction::MoveTo { id, orig, dst } =>
+            {
+                vec![GameEvent::Move { id, orig, dst }]
+            },
+            &GameAction::AttackOn { id, target, orig, dst } =>
+            {
+                let mut evts = vec![GameEvent::Move { id, orig, dst }];
+
+                evts.append(&mut CombatProcessor::process_combat(game_state, &id, &target));
+                
+                evts
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ impl ObjectInitializer
                obj.stats.insert(StatID::Speed, *max_speed);
            }
 
-           if let Some(Component::Attackable { max_health }) = obj.components.get(&ComponentID::AttackableID) 
+           if let Some(Component::Attackable { max_health, attacker_dice: _, defender_dice: _ }) = obj.components.get(&ComponentID::AttackableID) 
            {
                obj.stats.insert(StatID::Health, *max_health);
            }
